@@ -24,7 +24,7 @@ client = TelegramClient(
 # КАНАЛИ
 # =========================================
 
-SOURCE_CHANNELS = [-1002070244584]
+SOURCE_CHANNELS = [-1003837148064]
 
 TARGET_CHANNEL = [-1002363149346]
 
