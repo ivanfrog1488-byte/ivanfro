@@ -109,11 +109,14 @@ def get_template(text: str):
     if not attack_type or not location:
         return None
 
+    # нормалізація (щоб з великої букви)
+    location = location.strip()
+
     if attack_type == "пуски ударних":
-        return f"⚠️ Пуски ударних БпЛА з району: {location}"
+        return f"Пуски ударних БпЛА з району: {location}"
 
     if attack_type == "балістика":
-        return f"🚨 Загроза балістики з району: {location}"
+        return f"Загроза балістики з {location}"
 
     return None
 
