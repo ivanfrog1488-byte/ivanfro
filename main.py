@@ -144,8 +144,10 @@ def get_template(text: str):
 # ОБРОБКА ПОВІДОМЛЕНЬ
 # =========================================
 
-@client.on(events.NewMessage(chats=SOURCE_CHANNELS))
+@client.on(events.NewMessage())
 async def handler(event):
+    print("ANY MESSAGE:", event.chat_id)
+    print(event.raw_text)
 
     try:
 
