@@ -1,6 +1,7 @@
 # =========================================
 # TELEGRAM AUTO TEMPLATE BOT (FIXED)
 # =========================================
+print("SCRIPT LOADED")
 
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
@@ -182,7 +183,8 @@ async def handler(event):
 # START
 # =========================================
 
-print("BOT STARTED")
 
+print("BEFORE START")
 client.start()
 client.run_until_disconnected()
+print("BOT STARTED")
