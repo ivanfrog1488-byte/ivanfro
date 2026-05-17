@@ -25,10 +25,9 @@ client = TelegramClient(
 # КАНАЛИ
 # =========================================
 
-SOURCE_CHANNELS = [ "strategicontrol"]
+SOURCE_CHANNELS = [-1003837148064]
 
-TARGET_CHANNEL = ["boyovyy_sokil"]
-
+TARGET_CHANNEL = -1001234567890
 # =========================================
 # ШАБЛОНИ (ВСЕ В LOWERCASE КЛЮЧАХ)
 # =========================================
@@ -143,7 +142,7 @@ def get_template(text: str):
 # ОБРОБКА ПОВІДОМЛЕНЬ
 # =========================================
 
-@client.on(events.NewMessage())
+@client.on(events.NewMessage(chats=SOURCE_CHANNELS))
 async def handler(event):
     print(event.chat_id)
     print(event.raw_text)
@@ -184,7 +183,11 @@ async def handler(event):
 # =========================================
 
 
+print("SCRIPT LOADED")
 print("BEFORE START")
+
 client.start()
-client.run_until_disconnected()
+
 print("BOT STARTED")
+
+client.run_until_disconnected()
