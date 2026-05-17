@@ -146,7 +146,7 @@ def get_template(text: str):
 
 @client.on(events.NewMessage())
 async def handler(event):
-    print("ANY MESSAGE:", event.chat_id)
+    print(event.chat_id)
     print(event.raw_text)
 
     try:
