@@ -24,11 +24,9 @@ client = TelegramClient(
 # КАНАЛИ
 # =========================================
 
-SOURCE_CHANNELS = [
-    "strategicontrol"
-]
+SOURCE_CHANNELS = [-1002070244584]
 
-TARGET_CHANNEL = "boyovyy_sokil"
+TARGET_CHANNEL = [-1002363149346]
 
 # =========================================
 # ШАБЛОНИ (ВСЕ В LOWERCASE КЛЮЧАХ)
