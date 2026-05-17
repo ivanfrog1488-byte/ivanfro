@@ -1,6 +1,7 @@
 # =========================================
-# TELEGRAM AUTO TEMPLATE BOT (FIXED)
+# TELEGRAM AUTO TEMPLATE BOT (STABLE VERSION)
 # =========================================
+
 print("SCRIPT LOADED")
 
 from telethon import TelegramClient, events
@@ -8,7 +9,7 @@ from telethon.sessions import StringSession
 import os
 
 # =========================================
-# API
+# CONFIG
 # =========================================
 
 API_ID = int(os.getenv("API_ID"))
@@ -22,110 +23,82 @@ client = TelegramClient(
 )
 
 # =========================================
-# КАНАЛИ
+# CHANNELS
 # =========================================
 
-SOURCE_CHANNELS = [-1003837148064]
+SOURCE_CHANNELS = [-1002070244584]   # твій канал-джерело
 
-TARGET_CHANNEL = -1001234567890
-# =========================================
-# ШАБЛОНИ (ВСЕ В LOWERCASE КЛЮЧАХ)
-# =========================================
-
-TEMPLATES = {
-
-    "пуски ударних": {
-
-        "навля": "Пуски ударних БпЛА з локації: Навля",
-        "цимбулова": "Пуски ударних БпЛА з локації: Цимбулова",
-        "приморськ-ахтарськ": "Пуски ударних БпЛА з локації: Приморськ-Ахтарськ",
-        "гвардійське": "Пуски ударних БпЛА з локації: Гвардійське",
-        "міллерово": "Пуски ударних БпЛА з локації: Міллерово",
-        "халіно": "Пуски ударних БпЛА з локації: Халіно",
-        "шаталово": "Пуски ударних БпЛА з локації: Шаталово",
-        "чауда": "Пуски ударних БпЛА з локації: Чауда",
-        "донецьк": "Пуски ударних БпЛА з локації: Донецьк",
-        "орла": "Пуски ударних БпЛА з локації: Орла"
-
-    },
-
-    "балістика": {
-
-        "курська": "Загроза балістики з Курської області",
-        "брянська": "Загроза балістики з Брянської області",
-        "криму": "Загроза балістики з Криму",
-        "луганська": "Загроза балістики з Луганська",
-        "ліпецька": "Загроза балістики з Ліпецька",
-        "воронежа": "Загроза балістики з Воронежа",
-        "таганрога": "Загроза балістики з Таганрога",
-        "бєлгорода": "Загроза балістики з Бєлгорода",
-        "ростовської області": "Загроза балістики з Ростовської області"
-
-    }
-}
+TARGET_CHANNEL = "boyovyy_sokil"     # або заміни на -100ID (краще)
 
 # =========================================
-# КЕШ
+# КЕШ (антидубль)
 # =========================================
 
 recent_messages = set()
 
 # =========================================
-# ВИЗНАЧЕННЯ ТИПУ
+# ВИЗНАЧЕННЯ ТИПУ (ГНУЧКЕ)
 # =========================================
 
 def detect_attack_type(text: str):
+    t = text.lower()
 
-    text = text.lower()
-
-    if "пуски ударних" in text:
+    # ударні БпЛА
+    if (
+        "бпла" in t or
+        "герань" in t or
+        "шахед" in t or
+        "ударн" in t
+    ):
         return "пуски ударних"
 
-    if "баліст" in text:
+    # балістика
+    if (
+        "баліст" in t or
+        "ракета" in t
+    ):
         return "балістика"
 
     return None
 
 # =========================================
-# ВИЗНАЧЕННЯ ЛОКАЦІЇ
+# ВИЗНАЧЕННЯ ЛОКАЦІЇ (ГНУЧКЕ)
 # =========================================
 
 def detect_location(text: str):
+    t = text.lower()
 
-    text = text.lower()
+    locations = {
+        "навля": "навля",
+        "цимбулова": "цимбулова",
+        "приморськ": "приморськ-ахтарськ",
+        "гвардій": "гвардійське",
+        "міллер": "міллерово",
+        "халіно": "халіно",
+        "шатал": "шаталово",
+        "чауда": "чауда",
+        "донецьк": "донецьк",
+        "орел": "орла",
 
-    locations = [
-        "навля",
-        "цимбулова",
-        "приморськ-ахтарськ",
-        "гвардійське",
-        "міллерово",
-        "халіно",
-        "шаталово",
-        "чауда",
-        "донецьк",
-        "орла",
-        "курська",
-        "брянська",
-        "криму",
-        "луганська",
-        "ліпецька",
-        "воронежа",
-        "таганрога",
-        "бєлгорода",
-        "ростовської області"
-    ]
+        "брян": "брянська",
+        "курсь": "курська",
+        "крим": "криму",
+        "луган": "луганська",
+        "ліпець": "ліпецька",
+        "воронеж": "воронежа",
+        "таганрог": "таганрога",
+        "бєлгород": "бєлгорода",
+        "ростов": "ростовської області",
+    }
 
-    text_lower = text.lower()
-
-    for loc in locations:
-        if loc in text_lower:
-            return loc
+    for key in locations:
+        if key in t:
+            return locations[key]
 
     return None
 
 # =========================================
-# ОТРИМАННЯ ШАБЛОНУ
+# ТРИГЕР ШАБЛОНУ
 # =========================================
 
 def get_template(text: str):
@@ -136,58 +109,53 @@ def get_template(text: str):
     if not attack_type or not location:
         return None
 
-    return TEMPLATES.get(attack_type, {}).get(location)
+    if attack_type == "пуски ударних":
+        return f"⚠️ Пуски ударних БпЛА з району: {location}"
+
+    if attack_type == "балістика":
+        return f"🚨 Загроза балістики з району: {location}"
+
+    return None
 
 # =========================================
-# ОБРОБКА ПОВІДОМЛЕНЬ
+# HANDLER
 # =========================================
 
 @client.on(events.NewMessage(chats=SOURCE_CHANNELS))
 async def handler(event):
-    print(event.chat_id)
-    print(event.raw_text)
+
+    text = event.raw_text
+    print("RAW:", text)
+
+    if not text:
+        return
+
+    # антидубль
+    if text in recent_messages:
+        return
+
+    recent_messages.add(text)
+    if len(recent_messages) > 300:
+        recent_messages.clear()
+
+    template = get_template(text)
+
+    if not template:
+        return
 
     try:
-
-        text = event.raw_text
-
-        if not text:
-            return
-
-        # антидубль
-        if text in recent_messages:
-            return
-
-        recent_messages.add(text)
-
-        if len(recent_messages) > 300:
-            recent_messages.clear()
-
-        template = get_template(text)
-
-        if not template:
-            return
-
-        await client.send_message(
-            TARGET_CHANNEL,
-            template
-        )
-
-        print(f"[+] SENT: {text}")
+        await client.send_message(TARGET_CHANNEL, template)
+        print("[+] SENT:", template)
 
     except Exception as e:
-        print(f"[ERROR] {e}")
+        print("[ERROR SEND]:", e)
 
 # =========================================
 # START
 # =========================================
 
-
-print("SCRIPT LOADED")
 print("BEFORE START")
-
 client.start()
-
 print("BOT STARTED")
 
 client.run_until_disconnected()
