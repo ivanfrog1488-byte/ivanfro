@@ -26,7 +26,7 @@ client = TelegramClient(
 # CHANNELS
 # =========================================
 
-SOURCE_CHANNELS = [-1002070244584]   # твій канал-джерело
+SOURCE_CHANNELS = [-1003837148064]   # твій канал-джерело
 
 TARGET_CHANNEL = "boyovyy_sokil"     # або заміни на -100ID (краще)
 
